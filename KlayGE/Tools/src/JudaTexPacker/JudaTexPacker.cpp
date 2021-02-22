@@ -7,7 +7,7 @@
 #include <KlayGE/ResLoader.hpp>
 #include <KlayGE/Texture.hpp>
 #include <KFL/Math.hpp>
-#include <KFL/XMLDom.hpp>
+#include <KFL/Dom.hpp>
 #include <KlayGE/App3D.hpp>
 #include <KlayGE/RenderFactory.hpp>
 
@@ -100,8 +100,8 @@ void PackJTML(std::string const & jtml_name)
 
 	ResIdentifierPtr jtml = ResLoader::Instance().Open(jtml_path.string());
 
-	KlayGE::XMLDocument doc;
-	XMLNodePtr root = doc.Parse(*jtml);
+	std::unique_ptr<DomDocument> doc = ParseXmlDocument(*jtml);
+	DomNode const* root = doc->RootNode();
 
 	uint32_t n = root->AttribInt("num_tiles", 2048);
 	uint32_t num_tiles = 1;
@@ -130,7 +130,7 @@ void PackJTML(std::string const & jtml_name)
 
 	RenderFactory& rf = Context::Instance().RenderFactoryInstance();
 	uint32_t attr = 0;
-	for (XMLNodePtr node = root->FirstNode("image"); node; node = node->NextSibling("image"), ++ attr)
+	for (DomNode const* node = root->FirstChildNode("image"); node; node = node->NextSibling("image"), ++ attr)
 	{
 		timer.restart();
 

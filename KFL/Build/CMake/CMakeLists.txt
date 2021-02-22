@@ -24,6 +24,7 @@ SET(BASE_HEADER_FILES
 	${KFL_PROJECT_DIR}/include/KFL/CpuInfo.hpp
 	${KFL_PROJECT_DIR}/include/KFL/CustomizedStreamBuf.hpp
 	${KFL_PROJECT_DIR}/include/KFL/DllLoader.hpp
+	${KFL_PROJECT_DIR}/include/KFL/Dom.hpp
 	${KFL_PROJECT_DIR}/include/KFL/ErrorHandling.hpp
 	${KFL_PROJECT_DIR}/include/KFL/Hash.hpp
 	${KFL_PROJECT_DIR}/include/KFL/KFL.hpp
@@ -39,18 +40,19 @@ SET(BASE_HEADER_FILES
 	${KFL_PROJECT_DIR}/include/KFL/Types.hpp
 	${KFL_PROJECT_DIR}/include/KFL/Util.hpp
 	${KFL_PROJECT_DIR}/include/KFL/Uuid.hpp
-	${KFL_PROJECT_DIR}/include/KFL/XMLDom.hpp
 )
 SET(BASE_SOURCE_FILES
 	${KFL_PROJECT_DIR}/src/Base/CpuInfo.cpp
 	${KFL_PROJECT_DIR}/src/Base/CustomizedStreamBuf.cpp
 	${KFL_PROJECT_DIR}/src/Base/DllLoader.cpp
+	${KFL_PROJECT_DIR}/src/Base/Dom.cpp
+	${KFL_PROJECT_DIR}/src/Base/DomJson.cpp
+	${KFL_PROJECT_DIR}/src/Base/DomXml.cpp
 	${KFL_PROJECT_DIR}/src/Base/ErrorHandling.cpp
 	${KFL_PROJECT_DIR}/src/Base/Log.cpp
 	${KFL_PROJECT_DIR}/src/Base/Thread.cpp
 	${KFL_PROJECT_DIR}/src/Base/Timer.cpp
 	${KFL_PROJECT_DIR}/src/Base/Util.cpp
-	${KFL_PROJECT_DIR}/src/Base/XMLDom.cpp
 )
 
 SET(MATH_HEADER_FILES
@@ -146,6 +148,7 @@ target_link_libraries(${LIB_NAME}
 		bit-lite
 
 	PRIVATE
+		rapidjson
 		rapidxml
 )
 

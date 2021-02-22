@@ -272,7 +272,7 @@ namespace KlayGE
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node);
+		void Load(RenderEffect const& effect, DomNode const& node);
 #endif
 
 		void StreamIn(RenderEffect const& effect, ResIdentifier& res);
@@ -306,7 +306,7 @@ namespace KlayGE
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(XMLNode const& node);
+		void Load(DomNode const& node);
 #endif
 
 		void StreamIn(ResIdentifier& res);
@@ -339,7 +339,7 @@ namespace KlayGE
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(XMLNode const& node);
+		void Load(DomNode const& node);
 #endif
 
 		void StreamIn(ResIdentifier& res);
@@ -399,7 +399,7 @@ namespace KlayGE
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node);
+		void Load(RenderEffect const& effect, DomNode const& node);
 #endif
 
 		void StreamIn(ResIdentifier& res);
@@ -610,15 +610,15 @@ namespace KlayGE
 
 	private:
 #if KLAYGE_IS_DEV_PLATFORM
-		void PreprocessIncludes(XMLDocument& doc, XMLNode& root, std::vector<std::unique_ptr<XMLDocument>>& include_docs);
-		void RecursiveIncludeNode(XMLNode const & root, std::vector<std::string>& include_names) const;
+		void PreprocessIncludes(DomDocument& doc, DomNode& root, std::vector<std::unique_ptr<DomDocument>>& include_docs);
+		void RecursiveIncludeNode(DomNode const & root, std::vector<std::string>& include_names) const;
 		void InsertIncludeNodes(
-			XMLDocument& target_doc, XMLNode& target_root, XMLNode const& target_place, XMLNode const& include_root) const;
+			DomDocument& target_doc, DomNode& target_root, DomNode const& target_place, DomNode const& include_root) const;
 
-		XMLNodePtr ResolveInheritTechNode(XMLDocument& doc, XMLNode& root, XMLNodePtr const & tech_node);
-		void ResolveOverrideTechs(XMLDocument& doc, XMLNode& root);
+		std::unique_ptr<DomNode> ResolveInheritTechNode(DomDocument& doc, DomNode& root, DomNode const* tech_node);
+		void ResolveOverrideTechs(DomDocument& doc, DomNode& root);
 
-		void Load(XMLNode const & root, RenderEffect& effect);
+		void Load(DomNode const & root, RenderEffect& effect);
 #endif
 
 	private:
@@ -650,7 +650,7 @@ namespace KlayGE
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect& effect, XMLNode const& node, uint32_t tech_index);
+		void Load(RenderEffect& effect, DomNode const& node, uint32_t tech_index);
 		void CompileShaders(RenderEffect& effect, uint32_t tech_index);
 #endif
 		void CreateHwShaders(RenderEffect& effect, uint32_t tech_index);
@@ -745,7 +745,7 @@ namespace KlayGE
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect& effect, XMLNode const& node, uint32_t tech_index, uint32_t pass_index, RenderPass const* inherit_pass);
+		void Load(RenderEffect& effect, DomNode const& node, uint32_t tech_index, uint32_t pass_index, RenderPass const* inherit_pass);
 		void Load(RenderEffect& effect, uint32_t tech_index, uint32_t pass_index, RenderPass const* inherit_pass);
 		void CompileShaders(RenderEffect& effect, uint32_t tech_index, uint32_t pass_index);
 #endif
@@ -921,7 +921,7 @@ namespace KlayGE
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node);
+		void Load(RenderEffect const& effect, DomNode const& node);
 #endif
 
 		void StreamIn(RenderEffect const& effect, ResIdentifier& res);

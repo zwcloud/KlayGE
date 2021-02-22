@@ -58,7 +58,7 @@
 #include <KlayGE/RenderView.hpp>
 #include <KlayGE/ShaderObject.hpp>
 #include <KlayGE/Texture.hpp>
-#include <KFL/XMLDom.hpp>
+#include <KFL/Dom.hpp>
 #include <KFL/Hash.hpp>
 #include <KFL/CXX17/filesystem.hpp>
 
@@ -82,7 +82,7 @@ namespace
 
 #if KLAYGE_IS_DEV_PLATFORM
 	std::unique_ptr<RenderVariable> LoadVariable(
-		RenderEffect const& effect, XMLNode const& node, RenderEffectDataType type, uint32_t array_size);
+		RenderEffect const& effect, DomNode const& node, RenderEffectDataType type, uint32_t array_size);
 #endif
 	std::unique_ptr<RenderVariable> StreamInVariable(
 		RenderEffect const& effect, ResIdentifier& res, RenderEffectDataType type, uint32_t array_size);
@@ -469,21 +469,19 @@ namespace
 		}
 	}
 
-	int RetrieveIndex(XMLNode const & node)
+	int RetrieveIndex(DomNode const & node)
 	{
 		int index = 0;
-		XMLAttributePtr attr = node.Attrib("index");
-		if (attr)
+		if (DomAttrib const* attr = node.Attrib("index"))
 		{
 			index = attr->ValueInt();
 		}
 		return index;
 	}
 
-	std::string RetrieveProfile(XMLNode const & node)
+	std::string RetrieveProfile(DomNode const & node)
 	{
-		XMLAttributePtr attr = node.Attrib("profile");
-		if (attr)
+		if (DomAttrib const* attr = node.Attrib("profile"))
 		{
 			return std::string(attr->ValueString());
 		}
@@ -493,7 +491,7 @@ namespace
 		}
 	}
 
-	std::string RetrieveFuncName(XMLNode const & node)
+	std::string RetrieveFuncName(DomNode const & node)
 	{
 		std::string_view value = node.Attrib("value")->ValueString();
 		return std::string(value.substr(0, value.find("(")));
@@ -504,7 +502,7 @@ namespace
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		virtual void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) = 0;
+		virtual void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) = 0;
 #endif
 
 		virtual void StreamIn(RenderEffect const& effect, ResIdentifier& res) = 0;
@@ -660,7 +658,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -710,7 +708,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -761,7 +759,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -812,7 +810,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -863,7 +861,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -925,7 +923,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -991,7 +989,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1061,7 +1059,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1123,7 +1121,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1189,7 +1187,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1259,7 +1257,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1321,7 +1319,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1387,7 +1385,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1475,7 +1473,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1544,18 +1542,18 @@ namespace
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
 
 			SamplerStateDesc desc;
-			for (XMLNodePtr state_node = node.FirstNode("state"); state_node; state_node = state_node->NextSibling("state"))
+			for (DomNode const* state_node = node.FirstChildNode("state"); state_node; state_node = state_node->NextSibling("state"))
 			{
 				std::string_view const name = state_node->Attrib("name")->ValueString();
 				size_t const name_hash = HashRange(name.begin(), name.end());
 
-				XMLAttributePtr const value_attr = state_node->Attrib("value");
+				DomAttrib const* value_attr = state_node->Attrib("value");
 				std::string_view value_str;
 				if (value_attr)
 				{
@@ -1685,7 +1683,7 @@ namespace
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1729,7 +1727,7 @@ namespace
 	{
 	public:
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -1876,14 +1874,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2017,14 +2015,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2100,14 +2098,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2183,14 +2181,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2266,14 +2264,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2361,14 +2359,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2456,14 +2454,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2551,14 +2549,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2646,14 +2644,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2741,14 +2739,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2836,14 +2834,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -2931,14 +2929,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -3026,14 +3024,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -3146,14 +3144,14 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 
-			if (XMLNodePtr value_node = node.FirstNode("value"))
+			if (DomNode const* value_node = node.FirstChildNode("value"))
 			{
-				value_node = value_node->FirstNode();
-				if (value_node && (XNT_CData == value_node->Type()))
+				value_node = value_node->FirstChildNode();
+				if (value_node && (DomNodeType::CData == value_node->Type()))
 				{
 					std::string_view const value_str = value_node->ValueString();
 					std::vector<std::string_view> strs = StringUtil::Split(value_str, StringUtil::EqualTo(','));
@@ -3304,7 +3302,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -3423,7 +3421,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -3530,7 +3528,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -3608,7 +3606,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(array_size);
@@ -3683,7 +3681,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(node);
@@ -3734,7 +3732,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(effect);
 			KFL_UNUSED(node);
@@ -3796,7 +3794,7 @@ namespace
 		}
 
 #if KLAYGE_IS_DEV_PLATFORM
-		void Load(RenderEffect const& effect, XMLNode const& node, uint32_t array_size) override
+		void Load(RenderEffect const& effect, DomNode const& node, uint32_t array_size) override
 		{
 			KFL_UNUSED(array_size);
 
@@ -4064,7 +4062,7 @@ namespace
 
 #if KLAYGE_IS_DEV_PLATFORM
 	std::unique_ptr<RenderVariable> LoadVariable(
-		RenderEffect const& effect, XMLNode const& node, RenderEffectDataType type, uint32_t array_size)
+		RenderEffect const& effect, DomNode const& node, RenderEffectDataType type, uint32_t array_size)
 	{
 		auto ret = RenderVariableFactory(type, array_size != 0);
 		ret->Load(effect, node, array_size);
@@ -4214,7 +4212,7 @@ namespace KlayGE
 
 
 #if KLAYGE_IS_DEV_PLATFORM
-	void RenderEffectAnnotation::Load(RenderEffect const& effect, XMLNode const& node)
+	void RenderEffectAnnotation::Load(RenderEffect const& effect, DomNode const& node)
 	{
 		type_ = TypeFromName(node.Attrib("type")->ValueString());
 		name_ = std::string(node.Attrib("name")->ValueString());
@@ -4242,12 +4240,12 @@ namespace KlayGE
 
 
 #if KLAYGE_IS_DEV_PLATFORM
-	void RenderEffectStructType::Load(RenderEffect const& effect, XMLNode const& node)
+	void RenderEffectStructType::Load(RenderEffect const& effect, DomNode const& node)
 	{
 		name_ = std::string(node.Attrib("name")->ValueString());
 		name_hash_ = HashRange(name_.begin(), name_.end());
 
-		for (XMLNodePtr member_node = node.FirstNode("member"); member_node; member_node = member_node->NextSibling("member"))
+		for (DomNode const* member_node = node.FirstChildNode("member"); member_node; member_node = member_node->NextSibling("member"))
 		{
 			RenderEffectDataType member_type;
 			auto member_type_name = member_node->Attrib("type")->ValueString();
@@ -4595,18 +4593,18 @@ namespace KlayGE
 
 
 #if KLAYGE_IS_DEV_PLATFORM
-	void RenderEffectTemplate::PreprocessIncludes(XMLDocument& doc, XMLNode& root, std::vector<std::unique_ptr<XMLDocument>>& include_docs)
+	void RenderEffectTemplate::PreprocessIncludes(DomDocument& doc, DomNode& root, std::vector<std::unique_ptr<DomDocument>>& include_docs)
 	{
 		std::vector<std::string> whole_include_names;
-		for (XMLNodePtr node = root.FirstNode("include"); node;)
+		for (DomNode const* node = root.FirstChildNode("include"); node;)
 		{
-			XMLAttributePtr attr = node->Attrib("name");
+			DomAttrib const* attr = node->Attrib("name");
 			BOOST_ASSERT(attr);
 
 			std::string const include_name = std::string(attr->ValueString());
 
-			include_docs.push_back(MakeUniquePtr<XMLDocument>());
-			XMLNodePtr include_root = include_docs.back()->Parse(*ResLoader::Instance().Open(include_name));
+			include_docs.push_back(ParseXmlDocument(*ResLoader::Instance().Open(include_name)));
+			DomNode const* include_root = include_docs.back()->RootNode();
 
 			std::vector<std::string> include_names;
 			this->RecursiveIncludeNode(*include_root, include_names);
@@ -4631,8 +4629,8 @@ namespace KlayGE
 					}
 					else
 					{
-						include_docs.push_back(MakeUniquePtr<XMLDocument>());
-						XMLNodePtr recursive_include_root = include_docs.back()->Parse(*ResLoader::Instance().Open(*iter));
+						include_docs.push_back(ParseXmlDocument(*ResLoader::Instance().Open(*iter)));
+						DomNode const* recursive_include_root = include_docs.back()->RootNode();
 						this->InsertIncludeNodes(doc, root, *node, *recursive_include_root);
 
 						whole_include_names.push_back(*iter);
@@ -4657,23 +4655,23 @@ namespace KlayGE
 				whole_include_names.push_back(include_name);
 			}
 
-			XMLNodePtr node_next = node->NextSibling("include");
+			DomNode const* node_next = node->NextSibling("include");
 			root.RemoveNode(*node);
 			node = node_next;
 		}
 	}
 
-	void RenderEffectTemplate::RecursiveIncludeNode(XMLNode const & root, std::vector<std::string>& include_names) const
+	void RenderEffectTemplate::RecursiveIncludeNode(DomNode const & root, std::vector<std::string>& include_names) const
 	{
-		for (XMLNodePtr node = root.FirstNode("include"); node; node = node->NextSibling("include"))
+		for (DomNode const* node = root.FirstChildNode("include"); node; node = node->NextSibling("include"))
 		{
-			XMLAttributePtr attr = node->Attrib("name");
+			DomAttrib const* attr = node->Attrib("name");
 			BOOST_ASSERT(attr);
 
-			std::string const include_name = std::string(attr->ValueString());
+			std::string_view const include_name = attr->ValueString();
 
-			XMLDocument include_doc;
-			XMLNodePtr include_root = include_doc.Parse(*ResLoader::Instance().Open(include_name));
+			std::unique_ptr<DomDocument> include_doc = ParseXmlDocument(*ResLoader::Instance().Open(include_name));
+			DomNode const* include_root = include_doc->RootNode();
 			this->RecursiveIncludeNode(*include_root, include_names);
 
 			bool found = false;
@@ -4688,29 +4686,29 @@ namespace KlayGE
 
 			if (!found)
 			{
-				include_names.push_back(include_name);
+				include_names.push_back(std::string(include_name));
 			}
 		}
 	}
 
 	void RenderEffectTemplate::InsertIncludeNodes(
-		XMLDocument& target_doc, XMLNode& target_root, XMLNode const& target_place, XMLNode const& include_root) const
+		DomDocument& target_doc, DomNode& target_root, DomNode const& target_place, DomNode const& include_root) const
 	{
-		for (XMLNodePtr child_node = include_root.FirstNode(); child_node; child_node = child_node->NextSibling())
+		for (DomNode const* child_node = include_root.FirstChildNode(); child_node; child_node = child_node->NextSibling())
 		{
-			if ((XNT_Element == child_node->Type()) && (child_node->Name() != "include"))
+			if ((DomNodeType::Element == child_node->Type()) && (child_node->Name() != "include"))
 			{
-				target_root.InsertNode(target_place, target_doc.CloneNode(*child_node));
+				target_root.InsertAfterNode(target_place, target_doc.CloneNode(*child_node));
 			}
 		}
 	}
 
-	XMLNodePtr RenderEffectTemplate::ResolveInheritTechNode(XMLDocument& doc, XMLNode& root, XMLNodePtr const & tech_node)
+	std::unique_ptr<DomNode> RenderEffectTemplate::ResolveInheritTechNode(DomDocument& doc, DomNode& root, DomNode const* tech_node)
 	{
 		auto inherit_attr = tech_node->Attrib("inherit");
 		if (!inherit_attr)
 		{
-			return tech_node;
+			return doc.CloneNode(*tech_node);
 		}
 
 		auto const tech_name = tech_node->Attrib("name")->ValueString();
@@ -4718,48 +4716,47 @@ namespace KlayGE
 		auto const inherit_name = inherit_attr->ValueString();
 		BOOST_ASSERT(inherit_name != tech_name);
 
-		XMLNodePtr new_tech_node;
-		for (auto node = root.FirstNode("technique"); node; node = node->NextSibling("technique"))
+		std::unique_ptr<DomNode> new_tech_node;
+		for (auto* node = root.FirstChildNode("technique"); node; node = node->NextSibling("technique"))
 		{
 			auto const parent_tech_name = node->Attrib("name")->ValueString();
 			if (parent_tech_name == inherit_name)
 			{
-				auto parent_node = this->ResolveInheritTechNode(doc, root, node);
-				new_tech_node = doc.CloneNode(*parent_node);
+				new_tech_node = this->ResolveInheritTechNode(doc, root, node);
 
-				for (auto tech_anno_node = tech_node->FirstNode("annotation"); tech_anno_node;
+				for (auto* tech_anno_node = tech_node->FirstChildNode("annotation"); tech_anno_node;
 					tech_anno_node = tech_anno_node->NextSibling("annotation"))
 				{
 					new_tech_node->AppendNode(doc.CloneNode(*tech_anno_node));
 				}
-				for (auto tech_macro_node = tech_node->FirstNode("macro"); tech_macro_node;
+				for (auto* tech_macro_node = tech_node->FirstChildNode("macro"); tech_macro_node;
 					tech_macro_node = tech_macro_node->NextSibling("macro"))
 				{
 					new_tech_node->AppendNode(doc.CloneNode(*tech_macro_node));
 				}
-				for (auto pass_node = tech_node->FirstNode("pass"); pass_node; pass_node = pass_node->NextSibling("pass"))
+				for (auto* pass_node = tech_node->FirstChildNode("pass"); pass_node; pass_node = pass_node->NextSibling("pass"))
 				{
 					auto const pass_name = pass_node->Attrib("name")->ValueString();
 
 					bool found_pass = false;
-					for (auto new_pass_node = new_tech_node->FirstNode("pass"); new_pass_node;
+					for (auto* new_pass_node = new_tech_node->FirstChildNode("pass"); new_pass_node;
 						new_pass_node = new_pass_node->NextSibling("pass"))
 					{
 						auto const parent_pass_name = new_pass_node->Attrib("name")->ValueString();
 
 						if (pass_name == parent_pass_name)
 						{
-							for (auto pass_anno_node = pass_node->FirstNode("annotation"); pass_anno_node;
+							for (auto pass_anno_node = pass_node->FirstChildNode("annotation"); pass_anno_node;
 								pass_anno_node = pass_anno_node->NextSibling("annotation"))
 							{
 								new_pass_node->AppendNode(doc.CloneNode(*pass_anno_node));
 							}
-							for (auto pass_macro_node = pass_node->FirstNode("macro"); pass_macro_node;
+							for (auto pass_macro_node = pass_node->FirstChildNode("macro"); pass_macro_node;
 								pass_macro_node = pass_macro_node->NextSibling("macro"))
 							{
 								new_pass_node->AppendNode(doc.CloneNode(*pass_macro_node));
 							}
-							for (auto pass_state_node = pass_node->FirstNode("state"); pass_state_node;
+							for (auto pass_state_node = pass_node->FirstChildNode("state"); pass_state_node;
 								pass_state_node = pass_state_node->NextSibling("state"))
 							{
 								new_pass_node->AppendNode(doc.CloneNode(*pass_state_node));
@@ -4787,10 +4784,10 @@ namespace KlayGE
 		return new_tech_node;
 	}
 
-	void RenderEffectTemplate::ResolveOverrideTechs(XMLDocument& doc, XMLNode& root)
+	void RenderEffectTemplate::ResolveOverrideTechs(DomDocument& doc, DomNode& root)
 	{
-		std::vector<XMLNodePtr> tech_nodes;
-		for (XMLNodePtr node = root.FirstNode("technique"); node; node = node->NextSibling("technique"))
+		std::vector<DomNode const*> tech_nodes;
+		for (DomNode const* node = root.FirstChildNode("technique"); node; node = node->NextSibling("technique"))
 		{
 			tech_nodes.push_back(node);
 		}
@@ -4801,12 +4798,12 @@ namespace KlayGE
 			if (override_attr)
 			{
 				auto override_tech_name = override_attr->ValueString();
-				for (auto& overrided_node : tech_nodes)
+				for (auto*& overrided_node : tech_nodes)
 				{
 					auto name = overrided_node->Attrib("name")->ValueString();
 					if (override_tech_name == name)
 					{
-						auto new_node = doc.CloneNode(*this->ResolveInheritTechNode(doc, root, node));
+						auto new_node = this->ResolveInheritTechNode(doc, root, node);
 						new_node->RemoveAttrib(*new_node->Attrib("name"));
 						new_node->AppendAttrib(doc.AllocAttribString("name", name));
 						auto attr = new_node->Attrib("override");
@@ -4815,9 +4812,10 @@ namespace KlayGE
 							new_node->RemoveAttrib(*attr);
 						}
 
-						root.InsertNode(*overrided_node, new_node);
+						auto* new_node_raw = new_node.get();
+						root.InsertAfterNode(*overrided_node, std::move(new_node));
 						root.RemoveNode(*overrided_node);
-						overrided_node = new_node;
+						overrided_node = new_node_raw;
 
 						break;
 					}
@@ -4826,24 +4824,21 @@ namespace KlayGE
 		}
 	}
 
-	void RenderEffectTemplate::Load(XMLNode const & root, RenderEffect& effect)
+	void RenderEffectTemplate::Load(DomNode const & root, RenderEffect& effect)
 	{
+		for (DomNode const* macro_node = root.FirstChildNode("macro"); macro_node; macro_node = macro_node->NextSibling("macro"))
 		{
-			XMLNodePtr macro_node = root.FirstNode("macro");
-			for (; macro_node; macro_node = macro_node->NextSibling("macro"))
-			{
-				macros_.emplace_back(std::make_pair(macro_node->Attrib("name")->ValueString(), macro_node->Attrib("value")->ValueString()), true);
-			}
+			macros_.emplace_back(std::make_pair(macro_node->Attrib("name")->ValueString(), macro_node->Attrib("value")->ValueString()), true);
 		}
 
-		for (XMLNodePtr node = root.FirstNode("struct"); node; node = node->NextSibling("struct"))
+		for (DomNode const* node = root.FirstChildNode("struct"); node; node = node->NextSibling("struct"))
 		{
 			struct_types_.push_back(MakeUniquePtr<RenderEffectStructType>());
 			struct_types_.back()->Load(effect, *node);
 		}
 
-		std::vector<XMLNodePtr> parameter_nodes;
-		for (XMLNodePtr node = root.FirstNode(); node; node = node->NextSibling())
+		std::vector<DomNode const*> parameter_nodes;
+		for (DomNode const* node = root.FirstChildNode(); node; node = node->NextSibling())
 		{
 			if ("parameter" == node->Name())
 			{
@@ -4851,7 +4846,7 @@ namespace KlayGE
 			}
 			else if ("cbuffer" == node->Name())
 			{
-				for (XMLNodePtr sub_node = node->FirstNode("parameter"); sub_node; sub_node = sub_node->NextSibling("parameter"))
+				for (DomNode const* sub_node = node->FirstChildNode("parameter"); sub_node; sub_node = sub_node->NextSibling("parameter"))
 				{
 					parameter_nodes.push_back(sub_node);
 				}
@@ -4860,7 +4855,7 @@ namespace KlayGE
 
 		for (uint32_t param_index = 0; param_index < parameter_nodes.size(); ++ param_index)
 		{
-			XMLNode const& node = *parameter_nodes[param_index];
+			DomNode const& node = *parameter_nodes[param_index];
 
 			RenderEffectDataType type = REDT_count;
 			auto type_name = node.Attrib("type")->ValueString();
@@ -4895,7 +4890,7 @@ namespace KlayGE
 				&& (type != REDT_rasterizer_ordered_texture3D))
 			{
 				RenderEffectConstantBuffer* cbuff = nullptr;
-				XMLNodePtr parent_node = node.Parent();
+				DomNode const* parent_node = node.Parent();
 				std::string const cbuff_name = std::string(parent_node->AttribString("name", "global_cb"));
 				size_t const cbuff_name_hash = RT_HASH(cbuff_name.c_str());
 
@@ -4924,11 +4919,11 @@ namespace KlayGE
 			effect.params_.back()->Load(effect, node);
 		}
 
-		for (XMLNodePtr shader_graph_nodes_node = root.FirstNode("shader_graph_nodes"); shader_graph_nodes_node;
-			shader_graph_nodes_node = shader_graph_nodes_node->NextSibling("shader_graph_nodes"))
+		for (DomNode const* shader_graph_nodes_node = root.FirstChildNode("shader_graph_nodes"); shader_graph_nodes_node;
+			 shader_graph_nodes_node = shader_graph_nodes_node->NextSibling("shader_graph_nodes"))
 		{
-			for (XMLNodePtr shader_node = shader_graph_nodes_node->FirstNode("node"); shader_node;
-				shader_node = shader_node->NextSibling("node"))
+			for (DomNode const* shader_node = shader_graph_nodes_node->FirstChildNode("node"); shader_node;
+				 shader_node = shader_node->NextSibling("node"))
 			{
 				auto name_attr = shader_node->Attrib("name");
 				BOOST_ASSERT(name_attr);
@@ -4954,7 +4949,7 @@ namespace KlayGE
 			}
 		}
 
-		for (XMLNodePtr shader_node = root.FirstNode("shader"); shader_node; shader_node = shader_node->NextSibling("shader"))
+		for (DomNode const* shader_node = root.FirstChildNode("shader"); shader_node; shader_node = shader_node->NextSibling("shader"))
 		{
 			shader_frags_.push_back(RenderShaderFragment());
 			shader_frags_.back().Load(*shader_node);
@@ -4963,7 +4958,7 @@ namespace KlayGE
 		this->GenHLSLShaderText(effect);
 
 		uint32_t index = 0;
-		for (XMLNodePtr node = root.FirstNode("technique"); node; node = node->NextSibling("technique"), ++ index)
+		for (DomNode const* node = root.FirstChildNode("technique"); node; node = node->NextSibling("technique"), ++index)
 		{
 			techniques_.push_back(MakeUniquePtr<RenderTechnique>());
 			techniques_.back()->Load(effect, *node, index);
@@ -5004,8 +4999,8 @@ namespace KlayGE
 			{
 				timestamp_ = std::max(timestamp_, source->Timestamp());
 
-				std::unique_ptr<XMLDocument> doc = MakeUniquePtr<XMLDocument>();
-				XMLNodePtr root = doc->Parse(*source);
+				std::unique_ptr<DomDocument> doc = ParseXmlDocument(*source);
+				DomNode const* root = doc->RootNode();
 
 				std::vector<std::string> include_names;
 				this->RecursiveIncludeNode(*root, include_names);
@@ -5038,14 +5033,14 @@ namespace KlayGE
 
 			shader_descs_.resize(1);
 
-			std::vector<std::unique_ptr<XMLDocument>> include_docs;
-			std::vector<std::unique_ptr<XMLDocument>> frag_docs(names.size());
+			std::vector<std::unique_ptr<DomDocument>> include_docs;
+			std::vector<std::unique_ptr<DomDocument>> frag_docs(names.size());
 
 			ResIdentifierPtr main_source = ResLoader::Instance().Open(names[0]);
 			if (main_source)
 			{
-				frag_docs[0] = MakeUniquePtr<XMLDocument>();
-				XMLNodePtr root = frag_docs[0]->Parse(*main_source);
+				frag_docs[0] = ParseXmlDocument(*main_source);
+				DomNode* root = frag_docs[0]->RootNode();
 				this->PreprocessIncludes(*frag_docs[0], *root, include_docs);
 
 				for (size_t i = 1; i < names.size(); ++i)
@@ -5053,12 +5048,12 @@ namespace KlayGE
 					ResIdentifierPtr source = ResLoader::Instance().Open(names[i]);
 					if (source)
 					{
-						frag_docs[i] = MakeUniquePtr<XMLDocument>();
-						XMLNodePtr frag_root = frag_docs[i]->Parse(*source);
+						frag_docs[i] = ParseXmlDocument(*source);
+						DomNode* frag_root = frag_docs[i]->RootNode();
 
 						this->PreprocessIncludes(*frag_docs[i], *frag_root, include_docs);
 
-						for (auto frag_node = frag_root->FirstNode(); frag_node; frag_node = frag_node->NextSibling())
+						for (auto frag_node = frag_root->FirstChildNode(); frag_node; frag_node = frag_node->NextSibling())
 						{
 							root->AppendNode(frag_docs[i]->CloneNode(*frag_node));
 						}
@@ -5863,14 +5858,13 @@ namespace KlayGE
 
 
 #if KLAYGE_IS_DEV_PLATFORM
-	void RenderTechnique::Load(RenderEffect& effect, XMLNode const& node, uint32_t tech_index)
+	void RenderTechnique::Load(RenderEffect& effect, DomNode const& node, uint32_t tech_index)
 	{
 		name_ = std::string(node.Attrib("name")->ValueString());
 		name_hash_ = HashRange(name_.begin(), name_.end());
 
 		RenderTechnique* parent_tech = nullptr;
-		XMLAttributePtr inherit_attr = node.Attrib("inherit");
-		if (inherit_attr)
+		if (DomAttrib const* inherit_attr = node.Attrib("inherit"))
 		{
 			std::string_view const inherit = inherit_attr->ValueString();
 			BOOST_ASSERT(inherit != name_);
@@ -5879,65 +5873,59 @@ namespace KlayGE
 			BOOST_ASSERT(parent_tech);
 		}
 
+		if (DomNode const* anno_node = node.FirstChildNode("annotation"))
 		{
-			XMLNodePtr anno_node = node.FirstNode("annotation");
-			if (anno_node)
+			annotations_ = MakeSharedPtr<std::remove_reference<decltype(*annotations_)>::type>();
+			if (parent_tech && parent_tech->annotations_)
 			{
-				annotations_ = MakeSharedPtr<std::remove_reference<decltype(*annotations_)>::type>();
-				if (parent_tech && parent_tech->annotations_)
-				{
-					*annotations_ = *parent_tech->annotations_;
-				}
-				for (; anno_node; anno_node = anno_node->NextSibling("annotation"))
-				{
-					RenderEffectAnnotationPtr annotation = MakeSharedPtr<RenderEffectAnnotation>();
-					annotations_->push_back(annotation);
-
-					annotation->Load(effect, *anno_node);
-				}
+				*annotations_ = *parent_tech->annotations_;
 			}
-			else if (parent_tech)
+			for (; anno_node; anno_node = anno_node->NextSibling("annotation"))
 			{
-				annotations_ = parent_tech->annotations_;
+				RenderEffectAnnotationPtr annotation = MakeSharedPtr<RenderEffectAnnotation>();
+				annotations_->push_back(annotation);
+
+				annotation->Load(effect, *anno_node);
 			}
 		}
-
+		else if (parent_tech)
 		{
-			XMLNodePtr macro_node = node.FirstNode("macro");
-			if (macro_node)
-			{
-				macros_ = MakeSharedPtr<std::remove_reference<decltype(*macros_)>::type>();
-				if (parent_tech && parent_tech->macros_)
-				{
-					*macros_ = *parent_tech->macros_;
-				}
-				for (; macro_node; macro_node = macro_node->NextSibling("macro"))
-				{
-					std::string_view const name = macro_node->Attrib("name")->ValueString();
-					std::string_view const value = macro_node->Attrib("value")->ValueString();
-					bool found = false;
-					for (size_t i = 0; i < macros_->size(); ++ i)
-					{
-						if ((*macros_)[i].first == name)
-						{
-							(*macros_)[i].second = std::string(value);
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-					{
-						macros_->emplace_back(name, value);
-					}
-				}
-			}
-			else if (parent_tech)
-			{
-				macros_ = parent_tech->macros_;
-			}
+			annotations_ = parent_tech->annotations_;
 		}
 
-		if (!node.FirstNode("pass") && parent_tech)
+		if (DomNode const* macro_node = node.FirstChildNode("macro"))
+		{
+			macros_ = MakeSharedPtr<std::remove_reference<decltype(*macros_)>::type>();
+			if (parent_tech && parent_tech->macros_)
+			{
+				*macros_ = *parent_tech->macros_;
+			}
+			for (; macro_node; macro_node = macro_node->NextSibling("macro"))
+			{
+				std::string_view const name = macro_node->Attrib("name")->ValueString();
+				std::string_view const value = macro_node->Attrib("value")->ValueString();
+				bool found = false;
+				for (size_t i = 0; i < macros_->size(); ++ i)
+				{
+					if ((*macros_)[i].first == name)
+					{
+						(*macros_)[i].second = std::string(value);
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					macros_->emplace_back(name, value);
+				}
+			}
+		}
+		else if (parent_tech)
+		{
+			macros_ = parent_tech->macros_;
+		}
+
+		if (!node.FirstChildNode("pass") && parent_tech)
 		{
 			is_validate_ = parent_tech->is_validate_;
 			has_discard_ = parent_tech->has_discard_;
@@ -5980,7 +5968,7 @@ namespace KlayGE
 			}
 		
 			uint32_t index = 0;
-			for (XMLNodePtr pass_node = node.FirstNode("pass"); pass_node; pass_node = pass_node->NextSibling("pass"), ++ index)
+			for (DomNode const* pass_node = node.FirstChildNode("pass"); pass_node; pass_node = pass_node->NextSibling("pass"), ++ index)
 			{
 				RenderPassPtr pass = MakeSharedPtr<RenderPass>();
 				passes_.push_back(pass);
@@ -5995,7 +5983,7 @@ namespace KlayGE
 
 				is_validate_ &= pass->Validate();
 
-				for (XMLNodePtr state_node = pass_node->FirstNode("state"); state_node; state_node = state_node->NextSibling("state"))
+				for (DomNode const* state_node = pass_node->FirstChildNode("state"); state_node; state_node = state_node->NextSibling("state"))
 				{
 					++ weight_;
 
@@ -6188,67 +6176,61 @@ namespace KlayGE
 
 #if KLAYGE_IS_DEV_PLATFORM
 	void RenderPass::Load(
-		RenderEffect& effect, XMLNode const& node, uint32_t tech_index, uint32_t pass_index, RenderPass const* inherit_pass)
+		RenderEffect& effect, DomNode const& node, uint32_t tech_index, uint32_t pass_index, RenderPass const* inherit_pass)
 	{
 		name_ = std::string(node.Attrib("name")->ValueString());
 		name_hash_ = HashRange(name_.begin(), name_.end());
 
+		if (DomNode const* anno_node = node.FirstChildNode("annotation"))
 		{
-			XMLNodePtr anno_node = node.FirstNode("annotation");
-			if (anno_node)
+			annotations_ = MakeSharedPtr<std::remove_reference<decltype(*annotations_)>::type>();
+			if (inherit_pass && inherit_pass->annotations_)
 			{
-				annotations_ = MakeSharedPtr<std::remove_reference<decltype(*annotations_)>::type>();
-				if (inherit_pass && inherit_pass->annotations_)
-				{
-					*annotations_ = *inherit_pass->annotations_;
-				}
-				for (; anno_node; anno_node = anno_node->NextSibling("annotation"))
-				{
-					RenderEffectAnnotationPtr annotation = MakeSharedPtr<RenderEffectAnnotation>();
-					annotations_->push_back(annotation);
-
-					annotation->Load(effect, *anno_node);
-				}
+				*annotations_ = *inherit_pass->annotations_;
 			}
-			else if (inherit_pass)
+			for (; anno_node; anno_node = anno_node->NextSibling("annotation"))
 			{
-				annotations_ = inherit_pass->annotations_;
+				RenderEffectAnnotationPtr annotation = MakeSharedPtr<RenderEffectAnnotation>();
+				annotations_->push_back(annotation);
+
+				annotation->Load(effect, *anno_node);
 			}
 		}
-
+		else if (inherit_pass)
 		{
-			XMLNodePtr macro_node = node.FirstNode("macro");
-			if (macro_node)
+			annotations_ = inherit_pass->annotations_;
+		}
+
+		if (DomNode const* macro_node = node.FirstChildNode("macro"))
+		{
+			macros_ = MakeSharedPtr<std::remove_reference<decltype(*macros_)>::type>();
+			if (inherit_pass && inherit_pass->macros_)
 			{
-				macros_ = MakeSharedPtr<std::remove_reference<decltype(*macros_)>::type>();
-				if (inherit_pass && inherit_pass->macros_)
+				*macros_ = *inherit_pass->macros_;
+			}
+			for (; macro_node; macro_node = macro_node->NextSibling("macro"))
+			{
+				std::string_view const name = macro_node->Attrib("name")->ValueString();
+				std::string_view const value = macro_node->Attrib("value")->ValueString();
+				bool found = false;
+				for (size_t i = 0; i < macros_->size(); ++ i)
 				{
-					*macros_ = *inherit_pass->macros_;
-				}
-				for (; macro_node; macro_node = macro_node->NextSibling("macro"))
-				{
-					std::string_view const name = macro_node->Attrib("name")->ValueString();
-					std::string_view const value = macro_node->Attrib("value")->ValueString();
-					bool found = false;
-					for (size_t i = 0; i < macros_->size(); ++ i)
+					if ((*macros_)[i].first == name)
 					{
-						if ((*macros_)[i].first == name)
-						{
-							(*macros_)[i].second = std::string(value);
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-					{
-						macros_->emplace_back(name, value);
+						(*macros_)[i].second = std::string(value);
+						found = true;
+						break;
 					}
 				}
+				if (!found)
+				{
+					macros_->emplace_back(name, value);
+				}
 			}
-			else if (inherit_pass)
-			{
-				macros_ = inherit_pass->macros_;
-			}
+		}
+		else if (inherit_pass)
+		{
+			macros_ = inherit_pass->macros_;
 		}
 
 		uint64_t macros_hash;
@@ -6286,12 +6268,12 @@ namespace KlayGE
 			shader_desc_ids_ = inherit_pass->shader_desc_ids_;
 		}
 
-		for (XMLNodePtr state_node = node.FirstNode("state"); state_node; state_node = state_node->NextSibling("state"))
+		for (DomNode const* state_node = node.FirstChildNode("state"); state_node; state_node = state_node->NextSibling("state"))
 		{
 			std::string_view const name = state_node->Attrib("name")->ValueString();
 			size_t const state_name_hash = HashRange(name.begin(), name.end());
 
-			XMLAttributePtr const value_attr = state_node->Attrib("value");
+			DomAttrib const* value_attr = state_node->Attrib("value");
 			std::string_view value_str;
 			if (value_attr)
 			{
@@ -6394,23 +6376,19 @@ namespace KlayGE
 			}
 			else if (CT_HASH("blend_factor") == state_name_hash)
 			{
-				XMLAttributePtr attr = state_node->Attrib("r");
-				if (attr)
+				if (DomAttrib const* attr = state_node->Attrib("r"))
 				{
 					bs_desc.blend_factor.r() = attr->ValueFloat();
 				}
-				attr = state_node->Attrib("g");
-				if (attr)
+				if (DomAttrib const* attr = state_node->Attrib("g"))
 				{
 					bs_desc.blend_factor.g() = attr->ValueFloat();
 				}
-				attr = state_node->Attrib("b");
-				if (attr)
+				if (DomAttrib const* attr = state_node->Attrib("b"))
 				{
 					bs_desc.blend_factor.b() = attr->ValueFloat();
 				}
-				attr = state_node->Attrib("a");
-				if (attr)
+				if (DomAttrib const* attr = state_node->Attrib("a"))
 				{
 					bs_desc.blend_factor.a() = attr->ValueFloat();
 				}
@@ -6533,17 +6511,15 @@ namespace KlayGE
 
 				if ((ShaderStage::Vertex == stage) || (ShaderStage::Geometry == stage))
 				{
-					XMLNodePtr so_node = state_node->FirstNode("stream_output");
-					if (so_node)
+					if (DomNode const* so_node = state_node->FirstChildNode("stream_output"))
 					{
-						for (XMLNodePtr entry_node = so_node->FirstNode("entry"); entry_node; entry_node = entry_node->NextSibling("entry"))
+						for (DomNode const* entry_node = so_node->FirstChildNode("entry"); entry_node; entry_node = entry_node->NextSibling("entry"))
 						{
 							ShaderDesc::StreamOutputDecl decl;
 
 							std::string_view const usage_str = entry_node->Attrib("usage")->ValueString();
 							size_t const usage_str_hash = HashRange(usage_str.begin(), usage_str.end());
-							XMLAttributePtr attr = entry_node->Attrib("usage_index");
-							if (attr)
+							if (DomAttrib const* attr = entry_node->Attrib("usage_index"))
 							{
 								decl.usage_index = static_cast<uint8_t>(attr->ValueInt());
 							}
@@ -6596,9 +6572,8 @@ namespace KlayGE
 								KFL_UNREACHABLE("Invalid usage");
 							}
 
-							attr = entry_node->Attrib("component");
 							std::string component_str;
-							if (attr)
+							if (DomAttrib const* attr = entry_node->Attrib("component"))
 							{
 								component_str = std::string(attr->ValueString());
 							}
@@ -6609,8 +6584,7 @@ namespace KlayGE
 							decl.start_component = static_cast<uint8_t>(component_str[0] - 'x');
 							decl.component_count = static_cast<uint8_t>(std::min(static_cast<size_t>(4), component_str.size()));
 
-							attr = entry_node->Attrib("slot");
-							if (attr)
+							if (DomAttrib const* attr = entry_node->Attrib("slot"))
 							{
 								decl.slot = static_cast<uint8_t>(attr->ValueInt());
 							}
@@ -7151,7 +7125,7 @@ namespace KlayGE
 
 
 #if KLAYGE_IS_DEV_PLATFORM
-	void RenderEffectParameter::Load(RenderEffect const& effect, XMLNode const& node)
+	void RenderEffectParameter::Load(RenderEffect const& effect, DomNode const& node)
 	{
 		auto type_name = node.Attrib("type")->ValueString();
 		auto* struct_type = effect.StructTypeByName(type_name);
@@ -7168,8 +7142,7 @@ namespace KlayGE
 		name_->first = std::string(node.Attrib("name")->ValueString());
 		name_->second = HashRange(name_->first.begin(), name_->first.end());
 
-		XMLAttributePtr attr = node.Attrib("semantic");
-		if (attr)
+		if (DomAttrib const* attr = node.Attrib("semantic"))
 		{
 			semantic_ = MakeSharedPtr<std::remove_reference<decltype(*semantic_)>::type>();
 			semantic_->first = std::string(attr->ValueString());
@@ -7177,12 +7150,11 @@ namespace KlayGE
 		}
 
 		uint32_t as;
-		attr = node.Attrib("array_size");
-		if (attr)
+		if (DomAttrib const* attr = node.Attrib("array_size"))
 		{
 			array_size_ = MakeSharedPtr<std::string>(attr->ValueString());
 
-			if (!attr->TryConvert(as))
+			if (!attr->TryConvertValue(as))
 			{
 				as = 1;  // dummy array size
 			}
@@ -7193,16 +7165,13 @@ namespace KlayGE
 		}
 		var_ = LoadVariable(effect, node, type_, as);
 
+		if (DomNode const* anno_node = node.FirstChildNode("annotation"))
 		{
-			XMLNodePtr anno_node = node.FirstNode("annotation");
-			if (anno_node)
+			annotations_ = MakeSharedPtr<std::remove_reference<decltype(*annotations_)>::type>();
+			for (; anno_node; anno_node = anno_node->NextSibling("annotation"))
 			{
-				annotations_ = MakeSharedPtr<std::remove_reference<decltype(*annotations_)>::type>();
-				for (; anno_node; anno_node = anno_node->NextSibling("annotation"))
-				{
-					annotations_->push_back(MakeUniquePtr<RenderEffectAnnotation>());
-					annotations_->back()->Load(effect, *anno_node);
-				}
+				annotations_->push_back(MakeUniquePtr<RenderEffectAnnotation>());
+				annotations_->back()->Load(effect, *anno_node);
 			}
 		}
 
@@ -7412,11 +7381,10 @@ namespace KlayGE
 
 
 #if KLAYGE_IS_DEV_PLATFORM
-	void RenderShaderFragment::Load(XMLNode const& node)
+	void RenderShaderFragment::Load(DomNode const& node)
 	{
 		stage_ = ShaderStage::NumStages;
-		XMLAttributePtr attr = node.Attrib("type");
-		if (attr)
+		if (DomAttrib const* attr = node.Attrib("type"))
 		{
 			std::string_view const type_str = attr->ValueString();
 			size_t const type_str_hash = HashRange(type_str.begin(), type_str.end());
@@ -7448,12 +7416,10 @@ namespace KlayGE
 		}
 		
 		ver_ = ShaderModel(0, 0);
-		attr = node.Attrib("major_version");
-		if (attr)
+		if (DomAttrib const* attr = node.Attrib("major_version"))
 		{
 			uint8_t minor_ver = 0;
-			XMLAttributePtr minor_attr = node.Attrib("minor_version");
-			if (minor_attr)
+			if (DomAttrib const* minor_attr = node.Attrib("minor_version"))
 			{
 				minor_ver = static_cast<uint8_t>(minor_attr->ValueInt());
 			}
@@ -7461,16 +7427,15 @@ namespace KlayGE
 		}
 		else
 		{
-			attr = node.Attrib("version");
-			if (attr)
+			if (DomAttrib const* version_attr = node.Attrib("version"))
 			{
-				ver_ = ShaderModel(static_cast<uint8_t>(attr->ValueInt()), 0);
+				ver_ = ShaderModel(static_cast<uint8_t>(version_attr->ValueInt()), 0);
 			}
 		}
 
-		for (XMLNodePtr shader_text_node = node.FirstNode(); shader_text_node; shader_text_node = shader_text_node->NextSibling())
+		for (DomNode const* shader_text_node = node.FirstChildNode(); shader_text_node; shader_text_node = shader_text_node->NextSibling())
 		{
-			if ((XNT_Comment == shader_text_node->Type()) || (XNT_CData == shader_text_node->Type()))
+			if ((DomNodeType::Comment == shader_text_node->Type()) || (DomNodeType::CData == shader_text_node->Type()))
 			{
 				str_ += std::string(shader_text_node->ValueString());
 			}
@@ -7509,9 +7474,9 @@ namespace KlayGE
 
 
 #if KLAYGE_IS_DEV_PLATFORM
-	void RenderShaderGraphNode::Load(XMLNode const& node)
+	void RenderShaderGraphNode::Load(DomNode const& node)
 	{
-		XMLAttributePtr attr = node.Attrib("name");
+		DomAttrib const* attr = node.Attrib("name");
 		BOOST_ASSERT(attr);
 
 		if (!name_.empty())
@@ -7533,10 +7498,10 @@ namespace KlayGE
 				return_type_ = "void";
 			}
 
-			for (XMLNodePtr param_node = node.FirstNode(); param_node; param_node = param_node->NextSibling())
+			for (DomNode const* param_node = node.FirstChildNode(); param_node; param_node = param_node->NextSibling())
 			{
-				XMLAttributePtr type_attr = param_node->Attrib("type");
-				XMLAttributePtr name_attr = param_node->Attrib("name");
+				DomAttrib const* type_attr = param_node->Attrib("type");
+				DomAttrib const* name_attr = param_node->Attrib("name");
 				BOOST_ASSERT(type_attr);
 				BOOST_ASSERT(name_attr);
 

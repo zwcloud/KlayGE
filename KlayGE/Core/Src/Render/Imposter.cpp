@@ -29,7 +29,7 @@
  */
 
 #include <KlayGE/KlayGE.hpp>
-#include <KFL/XMLDom.hpp>
+#include <KFL/Dom.hpp>
 #include <KlayGE/ResLoader.hpp>
 #include <KlayGE/Texture.hpp>
 #include <KFL/Hash.hpp>
@@ -87,22 +87,22 @@ namespace KlayGE
 
 			ResIdentifierPtr impml_input = ResLoader::Instance().Open(imposter_desc_.res_name);
 
-			KlayGE::XMLDocument doc;
-			XMLNodePtr root = doc.Parse(*impml_input);
+			std::unique_ptr<DomDocument> doc = ParseXmlDocument(*impml_input);
+			DomNode const* root = doc->RootNode();
 
-			XMLNodePtr azimuth_node = root->FirstNode("azimuth");
+			DomNode const* azimuth_node = root->FirstChildNode("azimuth");
 			imposter_desc_.imposter_data->num_azimuth = azimuth_node->Attrib("value")->ValueUInt();
 
-			XMLNodePtr elevation_node = root->FirstNode("elevation");
+			DomNode const* elevation_node = root->FirstChildNode("elevation");
 			imposter_desc_.imposter_data->num_elevation = elevation_node->Attrib("value")->ValueUInt();
 
-			XMLNodePtr size_node = root->FirstNode("size");
+			DomNode const* size_node = root->FirstChildNode("size");
 			imposter_desc_.imposter_data->size = size_node->Attrib("value")->ValueUInt();
 
-			XMLNodePtr rt0_node = root->FirstNode("rt0");
+			DomNode const* rt0_node = root->FirstChildNode("rt0");
 			imposter_desc_.imposter_data->rt0_name = std::string(rt0_node->Attrib("name")->ValueString());
 
-			XMLNodePtr rt1_node = root->FirstNode("rt1");
+			DomNode const* rt1_node = root->FirstChildNode("rt1");
 			imposter_desc_.imposter_data->rt1_name = std::string(rt1_node->Attrib("name")->ValueString());
 		}
 

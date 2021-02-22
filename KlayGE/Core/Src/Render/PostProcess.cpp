@@ -29,7 +29,7 @@
 #include <KlayGE/RenderableHelper.hpp>
 #include <KlayGE/FrameBuffer.hpp>
 #include <KlayGE/RenderLayout.hpp>
-#include <KFL/XMLDom.hpp>
+#include <KFL/Dom.hpp>
 #include <KlayGE/ResLoader.hpp>
 #include <KlayGE/Camera.hpp>
 #include <KFL/Hash.hpp>
@@ -98,22 +98,21 @@ namespace
 
 			ResIdentifierPtr ppmm_input = ResLoader::Instance().Open(pp_desc_.res_name);
 
-			KlayGE::XMLDocument doc;
-			XMLNodePtr root = doc.Parse(*ppmm_input);
+			std::unique_ptr<DomDocument> doc = ParseXmlDocument(*ppmm_input);
+			DomNode const* root = doc->RootNode();
 
 			pp_desc_.pp_data->cs_data_per_thread_x = 1;
 			pp_desc_.pp_data->cs_data_per_thread_y = 1;
 			pp_desc_.pp_data->cs_data_per_thread_z = 1;
 
-			for (XMLNodePtr pp_node = root->FirstNode("post_processor"); pp_node; pp_node = pp_node->NextSibling("post_processor"))
+			for (DomNode const* pp_node = root->FirstChildNode("post_processor"); pp_node; pp_node = pp_node->NextSibling("post_processor"))
 			{
 				std::string_view name = pp_node->Attrib("name")->ValueString();
 				if (pp_desc_.pp_name == name)
 				{
 					Convert(pp_desc_.pp_data->name, name);
 
-					XMLAttributePtr vol_attr = pp_node->Attrib("volumetric");
-					if (vol_attr)
+					if (DomAttrib const* vol_attr = pp_node->Attrib("volumetric"))
 					{
 						pp_desc_.pp_data->volumetric = (vol_attr->ValueInt() != 0);
 					}
@@ -122,48 +121,43 @@ namespace
 						pp_desc_.pp_data->volumetric = false;
 					}
 
-					XMLNodePtr params_chunk = pp_node->FirstNode("params");
-					if (params_chunk)
+					if (DomNode const* params_chunk = pp_node->FirstChildNode("params"))
 					{
-						for (XMLNodePtr p_node = params_chunk->FirstNode("param"); p_node; p_node = p_node->NextSibling("param"))
+						for (DomNode const* p_node = params_chunk->FirstChildNode("param"); p_node; p_node = p_node->NextSibling("param"))
 						{
 							pp_desc_.pp_data->param_names.push_back(std::string(p_node->Attrib("name")->ValueString()));
 						}
 					}
-					XMLNodePtr input_chunk = pp_node->FirstNode("input");
-					if (input_chunk)
+					if (DomNode const* input_chunk = pp_node->FirstChildNode("input"))
 					{
-						for (XMLNodePtr pin_node = input_chunk->FirstNode("pin"); pin_node; pin_node = pin_node->NextSibling("pin"))
+						for (DomNode const* pin_node = input_chunk->FirstChildNode("pin"); pin_node;
+							 pin_node = pin_node->NextSibling("pin"))
 						{
 							pp_desc_.pp_data->input_pin_names.push_back(std::string(pin_node->Attrib("name")->ValueString()));
 						}
 					}
-					XMLNodePtr output_chunk = pp_node->FirstNode("output");
-					if (output_chunk)
+					if (DomNode const* output_chunk = pp_node->FirstChildNode("output"))
 					{
-						for (XMLNodePtr pin_node = output_chunk->FirstNode("pin"); pin_node; pin_node = pin_node->NextSibling("pin"))
+						for (DomNode const* pin_node = output_chunk->FirstChildNode("pin"); pin_node;
+							 pin_node = pin_node->NextSibling("pin"))
 						{
 							pp_desc_.pp_data->output_pin_names.push_back(std::string(pin_node->Attrib("name")->ValueString()));
 						}
 					}
-					XMLNodePtr shader_chunk = pp_node->FirstNode("shader");
-					if (shader_chunk)
+					if (DomNode const* shader_chunk = pp_node->FirstChildNode("shader"))
 					{
 						pp_desc_.pp_data->effect_name = std::string(shader_chunk->Attrib("effect")->ValueString());
 						pp_desc_.pp_data->tech_name = std::string(shader_chunk->Attrib("tech")->ValueString());
 
-						XMLAttributePtr attr = shader_chunk->Attrib("cs_data_per_thread_x");
-						if (attr)
+						if (DomAttrib const* attr = shader_chunk->Attrib("cs_data_per_thread_x"))
 						{
 							pp_desc_.pp_data->cs_data_per_thread_x = attr->ValueUInt();
 						}
-						attr = shader_chunk->Attrib("cs_data_per_thread_y");
-						if (attr)
+						if (DomAttrib const* attr = shader_chunk->Attrib("cs_data_per_thread_y"))
 						{
 							pp_desc_.pp_data->cs_data_per_thread_y = attr->ValueUInt();
 						}
-						attr = shader_chunk->Attrib("cs_data_per_thread_z");
-						if (attr)
+						if (DomAttrib const* attr = shader_chunk->Attrib("cs_data_per_thread_z"))
 						{
 							pp_desc_.pp_data->cs_data_per_thread_z = attr->ValueUInt();
 						}
