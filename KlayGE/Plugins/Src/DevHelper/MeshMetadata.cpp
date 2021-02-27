@@ -29,23 +29,15 @@
  */
 
 #include <KlayGE/KlayGE.hpp>
+
 #include <KFL/ErrorHandling.hpp>
 #include <KFL/Hash.hpp>
+#include <KFL/JsonDom.hpp>
 #include <KlayGE/ResLoader.hpp>
 
 #include <algorithm>
 #include <iterator>
 #include <fstream>
-
-#if defined(KLAYGE_COMPILER_MSVC)
-#pragma warning(push)
-#pragma warning(disable : 6313) // Incorrect operator: zero-valued flag cannot be tested with bitwise-and
-#endif
-#include <rapidjson/document.h>
-#include <rapidjson/prettywriter.h>
-#if defined(KLAYGE_COMPILER_MSVC)
-#pragma warning(pop)
-#endif
 
 #include "MetadataUtil.hpp"
 
@@ -67,130 +59,113 @@ namespace KlayGE
 		ResIdentifierPtr metadata_file = ResLoader::Instance().Open(name);
 		if (metadata_file)
 		{
-			std::string metadata;
-			std::copy(std::istream_iterator<char>(metadata_file->input_stream()), std::istream_iterator<char>(),
-				std::back_inserter<std::string>(metadata));
+			auto document = LoadJson(*metadata_file);
+			auto* root_value = document->RootValue();
 
-			rapidjson::Document document;
-			document.Parse(metadata.data());
-			BOOST_ASSERT(!document.HasParseError());
-
-			uint32_t const version = document["version"].GetUint();
+			uint32_t const version = root_value->Member("version")->ValueInt();
 			Verify(version == 1);
 
-			if (document.HasMember("auto_center"))
+			if (auto const* auto_center_val = root_value->Member("auto_center"))
 			{
-				auto const & auto_center_val = document["auto_center"];
-				BOOST_ASSERT(auto_center_val.IsBool());
-				new_metadata.auto_center_ = auto_center_val.GetBool();
+				BOOST_ASSERT(auto_center_val->Type() == JsonValueType::Bool);
+				new_metadata.auto_center_ = auto_center_val->ValueBool();
 			}
 
-			if (document.HasMember("pivot"))
+			if (auto const* pivot_val = root_value->Member("pivot"))
 			{
-				auto const & pivot_val = document["pivot"];
-				BOOST_ASSERT(pivot_val.IsArray());
-				BOOST_ASSERT(pivot_val.Size() >= new_metadata.pivot_.size());
+				BOOST_ASSERT(pivot_val->Type() == JsonValueType::Array);
+				auto const& values = pivot_val->ValueArray();
+				BOOST_ASSERT(values.size() >= new_metadata.pivot_.size());
 				uint32_t index = 0;
-				for (auto iter = pivot_val.Begin(); (iter != pivot_val.End()) && (index < new_metadata.pivot_.size()); ++ iter, ++ index)
+				for (auto iter = values.begin(); (iter != values.end()) && (index < new_metadata.pivot_.size()); ++iter, ++index)
 				{
-					BOOST_ASSERT(iter->IsNumber());
-					new_metadata.pivot_[index] = GetFloat(*iter);
+					new_metadata.pivot_[index] = GetFloat(*(*iter));
 				}
 			}
 
-			if (document.HasMember("translation"))
+			if (auto const* translation_val = root_value->Member("translation"))
 			{
-				auto const & translation_val = document["translation"];
-				BOOST_ASSERT(translation_val.IsArray());
-				BOOST_ASSERT(translation_val.Size() >= new_metadata.translation_.size());
+				BOOST_ASSERT(translation_val->Type() == JsonValueType::Array);
+				auto const& values = translation_val->ValueArray();
+				BOOST_ASSERT(values.size() >= new_metadata.translation_.size());
 				uint32_t index = 0;
-				for (auto iter = translation_val.Begin(); (iter != translation_val.End()) && (index < new_metadata.translation_.size());
-					++ iter, ++ index)
+				for (auto iter = values.begin(); (iter != values.end()) && (index < new_metadata.translation_.size()); ++iter, ++index)
 				{
-					BOOST_ASSERT(iter->IsNumber());
-					new_metadata.translation_[index] = GetFloat(*iter);
+					new_metadata.translation_[index] = GetFloat(*(*iter));
 				}
 			}
 
-			if (document.HasMember("rotation"))
+			if (auto const* rotation_val = root_value->Member("rotation"))
 			{
-				auto const & rotation_val = document["rotation"];
-				BOOST_ASSERT(rotation_val.IsArray());
-				BOOST_ASSERT(rotation_val.Size() >= new_metadata.rotation_.size());
+				BOOST_ASSERT(rotation_val->Type() == JsonValueType::Array);
+				auto const& values = rotation_val->ValueArray();
+				BOOST_ASSERT(values.size() >= new_metadata.rotation_.size());
 				uint32_t index = 0;
-				for (auto iter = rotation_val.Begin(); (iter != rotation_val.End()) && (index < new_metadata.rotation_.size());
-					++ iter, ++ index)
+				for (auto iter = values.begin(); (iter != values.end()) && (index < new_metadata.rotation_.size()); ++iter, ++index)
 				{
-					BOOST_ASSERT(iter->IsNumber());
-					new_metadata.rotation_[index] = GetFloat(*iter);
+					new_metadata.rotation_[index] = GetFloat(*(*iter));
 				}
 			}
 
-			if (document.HasMember("scale"))
+			if (auto const* scale_val = root_value->Member("scale"))
 			{
-				auto const & scale_val = document["scale"];
-				BOOST_ASSERT(scale_val.IsArray());
-				BOOST_ASSERT(scale_val.Size() >= new_metadata.scale_.size());
+				BOOST_ASSERT(scale_val->Type() == JsonValueType::Array);
+				auto const& values = scale_val->ValueArray();
+				BOOST_ASSERT(values.size() >= new_metadata.scale_.size());
 				uint32_t index = 0;
-				for (auto iter = scale_val.Begin(); (iter != scale_val.End()) && (index < new_metadata.scale_.size()); ++ iter, ++ index)
+				for (auto iter = values.begin(); (iter != values.end()) && (index < new_metadata.scale_.size()); ++iter, ++index)
 				{
-					BOOST_ASSERT(iter->IsNumber());
-					new_metadata.scale_[index] = GetFloat(*iter);
+					new_metadata.scale_[index] = GetFloat(*(*iter));
 				}
 			}
 
-			if (document.HasMember("axis_mapping"))
+			if (auto const* axis_mapping_val = root_value->Member("axis_mapping"))
 			{
-				auto const & axis_mapping_val = document["axis_mapping"];
-				BOOST_ASSERT(axis_mapping_val.IsArray());
-				BOOST_ASSERT(axis_mapping_val.Size() == 3);
+				BOOST_ASSERT(axis_mapping_val->Type() == JsonValueType::Array);
+				auto const& values = axis_mapping_val->ValueArray();
+				BOOST_ASSERT(values.size() == 3);
 				uint32_t index = 0;
-				for (auto iter = axis_mapping_val.Begin(); (iter != axis_mapping_val.End()) && (index < 3); ++ iter, ++ index)
+				for (auto iter = values.begin(); (iter != values.end()) && (index < 3); ++iter, ++index)
 				{
-					BOOST_ASSERT(iter->IsInt() || iter->IsUint() || iter->IsInt64() || iter->IsUint64());
-					new_metadata.axis_mapping_[index] = static_cast<uint8_t>(GetInt(*iter));
+					new_metadata.axis_mapping_[index] = static_cast<uint8_t>(GetInt(**iter));
 				}
 			}
 
-			if (document.HasMember("flip_winding_order"))
+			if (auto const* flip_winding_order_val = root_value->Member("flip_winding_order"))
 			{
-				auto const & flip_winding_order_val = document["flip_winding_order"];
-				BOOST_ASSERT(flip_winding_order_val.IsBool());
-				new_metadata.flip_winding_order_ = flip_winding_order_val.GetBool();
+				BOOST_ASSERT(flip_winding_order_val->Type() == JsonValueType::Bool);
+				new_metadata.flip_winding_order_ = flip_winding_order_val->ValueBool();
 			}
 
-			if (document.HasMember("materials"))
+			if (auto const* materials_val = root_value->Member("materials"))
 			{
-				auto const & materials_val = document["materials"];
-				BOOST_ASSERT(materials_val.IsArray());
-				new_metadata.material_file_names_.resize(materials_val.Size());
-				uint32_t index = 0;
-				for (auto iter = materials_val.Begin(); iter != materials_val.End(); ++iter, ++index)
+				BOOST_ASSERT(materials_val->Type() == JsonValueType::Array);
+				auto const& values = materials_val->ValueArray();
+				new_metadata.material_file_names_.reserve(values.size());
+				for (auto const& value : values)
 				{
-					BOOST_ASSERT(iter->IsString());
-					new_metadata.material_file_names_[index] = iter->GetString();
+					BOOST_ASSERT(value->Type() == JsonValueType::String);
+					new_metadata.material_file_names_.emplace_back(value->ValueString());
 				}
 			}
 
-			if (document.HasMember("source"))
+			if (auto const* source_val = root_value->Member("source"))
 			{
-				auto const& source_val = document["source"];
-				if (source_val.IsString())
+				if (source_val->Type() == JsonValueType::String)
 				{
-					new_metadata.lod_file_names_.assign(1, source_val.GetString());
+					new_metadata.lod_file_names_.assign(1, std::string(source_val->ValueString()));
 				}
 				else
 				{
-					if (source_val.HasMember("lod"))
+					if (auto const* lod_val = source_val->Member("lod"))
 					{
-						auto const& lod_val = source_val["lod"];
-						BOOST_ASSERT(lod_val.IsArray());
-						new_metadata.lod_file_names_.resize(lod_val.Size());
-						uint32_t index = 0;
-						for (auto iter = lod_val.Begin(); iter != lod_val.End(); ++iter, ++index)
+						BOOST_ASSERT(lod_val->Type() == JsonValueType::Array);
+						auto const& values = lod_val->ValueArray();
+						new_metadata.lod_file_names_.reserve(values.size());
+						for (auto const& value : values)
 						{
-							BOOST_ASSERT(iter->IsString());
-							new_metadata.lod_file_names_[index] = iter->GetString();
+							BOOST_ASSERT(value->Type() == JsonValueType::String);
+							new_metadata.lod_file_names_.emplace_back(value->ValueString());
 						}
 					}
 				}
@@ -214,61 +189,59 @@ namespace KlayGE
 
 	void MeshMetadata::Save(std::string const & name) const
 	{
-		rapidjson::Document document;
-		document.SetObject();
+		JsonDocument doc;
+		auto root_value = doc.AllocValue(JsonValueType::Object);
 
-		auto& allocator = document.GetAllocator();
-
-		document.AddMember("version", 1U, allocator);
+		root_value->AppendValue("version", doc.AllocValueUInt(1U));
 
 		if (auto_center_)
 		{
-			document.AddMember("auto_center", auto_center_, allocator);
+			root_value->AppendValue("auto_center", doc.AllocValueBool(auto_center_));
 		}
 
 		if (MathLib::length_sq(pivot_) > 1e-6f)
 		{
-			rapidjson::Value pivot_val;
-			pivot_val.SetArray();
+			std::vector<std::unique_ptr<JsonValue>> values;
+			values.reserve(pivot_.size());
 			for (size_t i = 0; i < pivot_.size(); ++ i)
 			{
-				pivot_val.PushBack(pivot_[i], allocator);
+				values.emplace_back(doc.AllocValueFloat(pivot_[i]));
 			}
-			document.AddMember("pivot", pivot_val, allocator);
+			root_value->AppendValue("pivot", doc.AllocValueArray(std::move(values)));
 		}
 
 		if (MathLib::length_sq(translation_) > 1e-6f)
 		{
-			rapidjson::Value translation_val;
-			translation_val.SetArray();
+			std::vector<std::unique_ptr<JsonValue>> values;
+			values.reserve(translation_.size());
 			for (size_t i = 0; i < translation_.size(); ++ i)
 			{
-				translation_val.PushBack(translation_[i], allocator);
+				values.emplace_back(doc.AllocValueFloat(translation_[i]));
 			}
-			document.AddMember("translation", translation_val, allocator);
+			root_value->AppendValue("translation", doc.AllocValueArray(std::move(values)));
 		}
 
 		if (!MathLib::equal(rotation_.x(), 0.0f) || !MathLib::equal(rotation_.y(), 0.0f) || !MathLib::equal(rotation_.z(), 0.0f)
 			|| !MathLib::equal(rotation_.w(), 1.0f))
 		{
-			rapidjson::Value rotation_val;
-			rotation_val.SetArray();
+			std::vector<std::unique_ptr<JsonValue>> values;
+			values.reserve(rotation_.size());
 			for (size_t i = 0; i < rotation_.size(); ++ i)
 			{
-				rotation_val.PushBack(rotation_[i], allocator);
+				values.emplace_back(doc.AllocValueFloat(rotation_[i]));
 			}
-			document.AddMember("rotation", rotation_val, allocator);
+			root_value->AppendValue("rotation", doc.AllocValueArray(std::move(values)));
 		}
 
 		if (!MathLib::equal(scale_.x(), 1.0f) || !MathLib::equal(scale_.y(), 1.0f) || !MathLib::equal(scale_.z(), 1.0f))
 		{
-			rapidjson::Value scale_val;
-			scale_val.SetArray();
+			std::vector<std::unique_ptr<JsonValue>> values;
+			values.reserve(scale_.size());
 			for (size_t i = 0; i < scale_.size(); ++ i)
 			{
-				scale_val.PushBack(scale_[i], allocator);
+				values.emplace_back(doc.AllocValueFloat(scale_[i]));
 			}
-			document.AddMember("scale", scale_val, allocator);
+			root_value->AppendValue("scale", doc.AllocValueArray(std::move(values)));
 		}
 
 		bool need_swizzle = false;
@@ -282,62 +255,53 @@ namespace KlayGE
 		}
 		if (need_swizzle)
 		{
-			rapidjson::Value axis_mapping_val;
-			axis_mapping_val.SetArray();
+			std::vector<std::unique_ptr<JsonValue>> values;
+			values.reserve(std::size(axis_mapping_));
 			for (size_t i = 0; i < std::size(axis_mapping_); ++ i)
 			{
-				axis_mapping_val.PushBack(static_cast<int>(axis_mapping_[i]), allocator);
+				values.emplace_back(doc.AllocValueInt(static_cast<int>(axis_mapping_[i])));
 			}
-			document.AddMember("axis_mapping", axis_mapping_val, allocator);
+			root_value->AppendValue("axis_mapping", doc.AllocValueArray(std::move(values)));
 		}
 
 		if (flip_winding_order_)
 		{
-			document.AddMember("flip_winding_order", flip_winding_order_, allocator);
+			root_value->AppendValue("flip_winding_order", doc.AllocValueBool(flip_winding_order_));
 		}
 
 		if (!material_file_names_.empty())
 		{
-			rapidjson::Value mtl_names_val;
-			mtl_names_val.SetArray();
-
+			std::vector<std::unique_ptr<JsonValue>> values;
+			values.reserve(material_file_names_.size());
 			for (size_t i = 0; i < material_file_names_.size(); ++i)
 			{
-				auto const & str = material_file_names_[i];
-				mtl_names_val.PushBack(rapidjson::Value(str.c_str(), allocator), allocator);
+				values.emplace_back(doc.AllocValueString(material_file_names_[i]));
 			}
-
-			document.AddMember("materials", mtl_names_val, allocator);
+			root_value->AppendValue("materials", doc.AllocValueArray(std::move(values)));
 		}
 
 		if (lod_file_names_.size() == 1)
 		{
-			auto const& str = lod_file_names_[0];
-			document.AddMember("source", rapidjson::Value(str.c_str(), allocator), allocator);
+			root_value->AppendValue("source", doc.AllocValueString(lod_file_names_[0]));
 		}
 		else
 		{
-			rapidjson::Value array_names_val;
-			array_names_val.SetArray();
-
+			std::vector<std::unique_ptr<JsonValue>> lod_values;
+			lod_values.reserve(lod_file_names_.size());
 			for (size_t i = 0; i < lod_file_names_.size(); ++i)
 			{
-				auto const& str = lod_file_names_[i];
-				array_names_val.PushBack(rapidjson::Value(str.c_str(), allocator), allocator);
+				lod_values.emplace_back(doc.AllocValueString(lod_file_names_[i]));
 			}
 
-			rapidjson::Value lod_val;
-			lod_val.SetObject();
-			lod_val.AddMember("lod", array_names_val, allocator);
-
-			document.AddMember("source", lod_val, allocator);
+			std::vector<std::pair<std::string, std::unique_ptr<JsonValue>>> lod_val(1);
+			lod_val[0] = {"lod", doc.AllocValueArray(std::move(lod_values))};
+			root_value->AppendValue("source", doc.AllocValueObject(std::move(lod_val)));
 		}
 
-		rapidjson::StringBuffer sb;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
-		document.Accept(writer);
+		doc.RootValue(std::move(root_value));
+
 		std::ofstream ofs(name);
-		ofs << sb.GetString();
+		SaveJson(doc, ofs);
 	}
 
 	uint32_t MeshMetadata::NumLods() const

@@ -31,11 +31,42 @@
 #include <KlayGE/KlayGE.hpp>
 
 #include <KFL/ErrorHandling.hpp>
+#include <KFL/JsonDom.hpp>
 
 #include "MetadataUtil.hpp"
 
 namespace KlayGE
 {
+	float GetFloat(JsonValue const& value)
+	{
+		switch (value.Type())
+		{
+		case JsonValueType::Float:
+			return value.ValueFloat();
+		case JsonValueType::Int:
+			return static_cast<float>(value.ValueInt());
+		case JsonValueType::UInt:
+			return static_cast<float>(value.ValueUInt());
+
+		default:
+			KFL_UNREACHABLE("Invalid value type.");
+		}
+	}
+
+	int GetInt(JsonValue const& value)
+	{
+		switch (value.Type())
+		{
+		case JsonValueType::Int:
+			return value.ValueInt();
+		case JsonValueType::UInt:
+			return static_cast<int>(value.ValueUInt());
+
+		default:
+			KFL_UNREACHABLE("Invalid value type.");
+		}
+	}
+
 	float GetFloat(rapidjson::Value const& value)
 	{
 		if (value.IsFloat())

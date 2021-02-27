@@ -46,6 +46,9 @@
 
 namespace KlayGE
 {
+	float GetFloat(JsonValue const& value);
+	int GetInt(JsonValue const& value);
+
 	float GetFloat(rapidjson::Value const& value);
 	int GetInt(rapidjson::Value const& value);
 } // namespace KlayGE
